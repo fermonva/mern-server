@@ -105,7 +105,7 @@ exports.eliminarProyecto = async (req, res) => {
     }
 
     // Eliminar el proyecto
-    proyecto = await Proyecto.findOneAndRemove({ _id: req.params.id });
+    proyecto = await Proyecto.findOneAndDelete({ _id: req.params.id });
     res.json({ msg: "Proyecto eliminado" });
   } catch (error) {
     console.log(error);

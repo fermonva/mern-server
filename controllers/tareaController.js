@@ -126,7 +126,7 @@ exports.eliminarTarea = async (req, res) => {
     }
 
     // Eliminar tarea
-    await Tarea.findOneAndRemove({ _id: req.params.id });
+    await Tarea.findOneAndDelete({ _id: req.params.id });
     res.json({ msg: 'Tarea eliminada' });
   } catch (error) {
     console.log(error);

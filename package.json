@@ -5,20 +5,21 @@
   "main": "index.js",
   "scripts": {
     "start": "node .",
-    "dev": "nodemon ."
+    "dev": "node --watch ."
   },
   "author": "Jeferson Fernando Monsalve Vargas",
   "license": "ISC",
-  "devDependencies": {
-    "nodemon": "^2.0.4"
-  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-validator": "^6.6.0",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.20"
-  }
+    "express": "^4.22.3",
+    "express-validator": "^6.15.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.24.10"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@12.21.0"
 }
