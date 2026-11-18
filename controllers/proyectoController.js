@@ -1,6 +1,12 @@
 const Proyecto = require("../models/Proyecto");
 const { validationResult } = require("express-validator");
 
+/**
+ * Guarda un proyecto del usuario autenticado.
+ * @param {import("express").Request} req Solicitud HTTP.
+ * @param {import("express").Response} res Respuesta HTTP.
+ * @returns {Promise<import("express").Response>} Respuesta de la operación.
+ */
 exports.crearProyecto = async (req, res) => {
   // Revisar errores
   const errores = validationResult(req);
@@ -12,33 +18,40 @@ exports.crearProyecto = async (req, res) => {
 
   try {
     // Crear un nuevo proyecto
-    const proyecto = new Proyecto(req.body);
+    const proyecto = new Proyecto({ nombre: req.body.nombre, creador: req.usuario.id });
 
-    // Guardar el id de creador del proyecto
-    proyecto.creador = req.usuario.id;
-    // Guardar proyecto
-    proyecto.save();
-    res.json(proyecto);
+    await proyecto.save();
+    return res.json(proyecto);
   } catch (error) {
     console.log(error);
-    res.status(500).send("Hubo un error");
+    return res.status(500).send("Hubo un error");
   }
 };
 
-// Obtener los proyectos del usuario actual
+/**
+ * Lista los proyectos del usuario autenticado.
+ * @param {import("express").Request} req Solicitud HTTP.
+ * @param {import("express").Response} res Respuesta HTTP.
+ * @returns {Promise<import("express").Response>} Respuesta de la operación.
+ */
 exports.obtenerProyectos = async (req, res) => {
   try {
     const proyectos = await Proyecto.find({ creador: req.usuario.id }).sort({
       creado: -1,
     });
-    res.json({ proyectos });
+    return res.json({ proyectos });
   } catch (error) {
     console.log(error);
-    res.status(500).send("Hubo un error");
+    return res.status(500).send("Hubo un error");
   }
 };
 
-// Actualizar un proyecto
+/**
+ * Actualiza un proyecto del usuario autenticado.
+ * @param {import("express").Request} req Solicitud HTTP.
+ * @param {import("express").Response} res Respuesta HTTP.
+ * @returns {Promise<import("express").Response>} Respuesta de la operación.
+ */
 exports.actualizarProyecto = async (req, res) => {
   // Revisar errores
   const errores = validationResult(req);
@@ -77,14 +90,19 @@ exports.actualizarProyecto = async (req, res) => {
       { new: true }
     );
 
-    res.json({ proyecto });
+    return res.json({ proyecto });
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error en el servidor");
+    return res.status(500).send("Error en el servidor");
   }
 };
 
-// Eliminar proyecto por ID
+/**
+ * Elimina un proyecto del usuario autenticado.
+ * @param {import("express").Request} req Solicitud HTTP.
+ * @param {import("express").Response} res Respuesta HTTP.
+ * @returns {Promise<import("express").Response>} Respuesta de la operación.
+ */
 exports.eliminarProyecto = async (req, res) => {
   try {
     // Revisar el ID
@@ -106,9 +124,9 @@ exports.eliminarProyecto = async (req, res) => {
 
     // Eliminar el proyecto
     proyecto = await Proyecto.findOneAndDelete({ _id: req.params.id });
-    res.json({ msg: "Proyecto eliminado" });
+    return res.json({ msg: "Proyecto eliminado" });
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error en el servidor");
+    return res.status(500).send("Error en el servidor");
   }
 };

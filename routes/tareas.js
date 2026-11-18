@@ -1,26 +1,24 @@
-const express = require('express');
-const router = express.Router();
-const tareaController = require('../controllers/tareaController');
+const { Router } = require('express');
+const { body, param, query } = require('express-validator');
+const { crearTarea, obtenerTareas, actualizarTarea, eliminarTarea } = require('../controllers/tareaController');
 const auth = require('../middleware/auth');
-const { check } = require('express-validator');
 
-// Crear una tarea
-// api/tareas
-router.post(
-  '/',
-  auth,
-  [check('nombre', 'El nombre es obligatorio').not().isEmpty()],
-  [check('proyecto', 'El proyecto es obligatorio').not().isEmpty()],
-  tareaController.crearTarea
-);
+const router = Router();
+const validarNombre = () => body('nombre', 'Ingresá un nombre de 1 a 200 caracteres')
+  .isString().bail().trim().isLength({ min: 1, max: 200 });
+const validarEstado = () => body('estado', 'El estado debe ser booleano')
+  .optional().custom((estado) => typeof estado === 'boolean');
+const validarId = () => param('id', 'ID de tarea inválido').isMongoId();
 
-// Obtener tareas por proyecto
-router.get('/', auth, tareaController.obtenerTareas);
-
-// Actualizar tarea
-router.put('/:id', auth, tareaController.actualizarTarea);
-
-// Eliminar tarea
-router.delete('/:id', auth, tareaController.eliminarTarea);
+router.post('/', auth, [
+  validarNombre(),
+  validarEstado(),
+  body('proyecto', 'ID de proyecto inválido').isString().bail().isMongoId(),
+], crearTarea);
+router.get('/', auth, [
+  query('proyecto', 'ID de proyecto inválido').isString().bail().isMongoId(),
+], obtenerTareas);
+router.put('/:id', auth, [validarId(), validarNombre().optional(), validarEstado()], actualizarTarea);
+router.delete('/:id', auth, validarId(), eliminarTarea);
 
 module.exports = router;

@@ -3,15 +3,21 @@ const bcryptjs = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 
+/**
+ * Registra un usuario y emite su token de acceso.
+ * @param {import("express").Request} req Solicitud HTTP.
+ * @param {import("express").Response} res Respuesta HTTP.
+ * @returns {Promise<import("express").Response>} Respuesta de la operación.
+ */
 exports.crearUsuario = async (req, res) => {
   // Revisar errores
   const errores = validationResult(req);
   if (!errores.isEmpty()) {
-    return res.status(400).json({ errores: errores.array() });
+    return res.status(400).json({ errores: errores.array().map(({ param, msg }) => ({ param, msg })) });
   }
 
   // Destructuring de email y password
-  const { email, password } = req.body;
+  const { nombre, email, password } = req.body;
 
   try {
     //   Revisar que el usuario registrado sea unico
@@ -22,7 +28,7 @@ exports.crearUsuario = async (req, res) => {
     }
 
     // Crear el nuevo usuario
-    usuario = new Usuario(req.body);
+    usuario = new Usuario({ nombre, email });
 
     // Hashear el password
     const salt = await bcryptjs.genSalt(10);
@@ -38,22 +44,10 @@ exports.crearUsuario = async (req, res) => {
       }
     };
 
-    // Firmar el jwt
-    jwt.sign(
-      payload,
-      process.env.SECRETA,
-      {
-        expiresIn: 3600,
-      },
-      (error, token) => {
-        if (error) throw error;
-
-        // Mensaje de confirmación
-        res.json({ token });
-      }
-    );
+    const token = jwt.sign(payload, process.env.SECRETA, { expiresIn: 3600 });
+    return res.json({ token });
   } catch (error) {
     console.log(error);
-    res.status(400).send("Se presento un error");
+    return res.status(500).json({ msg: "Hubo un error" });
   }
 };
