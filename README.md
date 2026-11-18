@@ -47,6 +47,18 @@ Registrá una cuenta o iniciá sesión para obtener un token. En las rutas prote
 | `POST /api/tareas` | Crear una tarea (`nombre`, `proyecto`). | Sí |
 | `PUT /api/tareas/:id`, `DELETE /api/tareas/:id` | Actualizar o eliminar una tarea. | Sí |
 
+## Referencia interactiva
+
+Con el servidor en marcha, abrí [Scalar en `/docs`](http://localhost:4000/docs) o descargá la [especificación OpenAPI](http://localhost:4000/openapi.json). La referencia describe las 11 operaciones en español. Para probar una operación protegida, registrate o iniciá sesión y pegá el JWT en la autenticación `x-auth-token`, sin el prefijo `Bearer`.
+
+Scalar usa un bundle local, sin CDN ni proxy para las solicitudes. Con `NODE_ENV=production`, la referencia, la especificación y el bundle no se publican. Esto no modifica el acceso a las rutas de la API.
+
+Para verificar las rutas de documentación sin MongoDB ni `variables.env`:
+
+```bash
+pnpm exec node --test test/docs.test.js
+```
+
 ## Si MongoDB no conecta
 
 - **Local:** verificá que MongoDB esté en ejecución y que `DB_MONGO` apunte al puerto correcto.

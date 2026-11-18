@@ -23,6 +23,9 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/proyectos', require('./routes/proyectos'));
 app.use('/api/tareas', require('./routes/tareas'));
 
+// Publicar la documentación fuera de producción
+require('./docs/mount')(app);
+
 // Definir la pagina principal
 // app.get('/', (req, res) => {
 //     res.send("hola mundo")
